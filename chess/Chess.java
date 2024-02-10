@@ -65,7 +65,9 @@ public class Chess {
 	 * This method should reset the game, and start from scratch.
 	 */
 	public static void start() {
-		/* FILL IN THIS METHOD */
+		System.out.flush();
+
+		
 	}
 }
 
