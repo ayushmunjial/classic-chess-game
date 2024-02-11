@@ -7,7 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Board {
+public abstract class Piece {
     
 }
 
