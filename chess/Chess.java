@@ -2,8 +2,6 @@
 
 package chess;
 
-import java.sql.Array;
-
 /*************************************************************************************************************************************** 
  * @author Ayush Munjial
  * @author Hein Min Thu
@@ -46,8 +44,8 @@ class ReturnPlay {
 
 public class Chess {
 	
-	static ArrayList<ReturnPiece> piecesAtStart;
-	enum Player { white, black }
+	public static ArrayList<ReturnPiece> piecesOnBoard; enum Player { white, black }
+	public static Player turn;
 	
 	/**
 	 * Plays the next move for whichever player has the turn.
@@ -74,7 +72,7 @@ public class Chess {
 	----------------------------------------------------------------------------------------------------------------------------------*/
 	
 	public static void start() {
-		System.out.flush();
+		System.out.flush(); turn = Player.white; // A game must always start white a move by the player who is playing white.
 		ReturnPiece WR1 = new ReturnPiece(); WR1.pieceType = PieceType.WR; WR1.pieceFile = PieceFile.a; WR1.pieceRank = 1;
 		ReturnPiece WN1 = new ReturnPiece(); WN1.pieceType = PieceType.WN; WN1.pieceFile = PieceFile.b; WN1.pieceRank = 1;
 		ReturnPiece WB1 = new ReturnPiece(); WB1.pieceType = PieceType.WB; WB1.pieceFile = PieceFile.c; WB1.pieceRank = 1;
@@ -112,8 +110,8 @@ public class Chess {
 		ReturnPiece BN2 = new ReturnPiece(); BN2.pieceType = PieceType.BN; BN2.pieceFile = PieceFile.g; BN2.pieceRank = 8;
 		ReturnPiece BR2 = new ReturnPiece(); BR2.pieceType = PieceType.BR; BR2.pieceFile = PieceFile.h; BR2.pieceRank = 8;
 
-		piecesAtStart.addAll(Arrays.asList(WR1, WN1, WB1, WQ0, WK0, WB2, WN2, WR1, WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8));
-		piecesAtStart.addAll(Arrays.asList(BR1, BN1, BB1, BQ0, BK0, BB2, BN2, BR1, BP1, BP2, BP3, BP4, BP5, BP6, BP7, BP8));
+		piecesOnBoard.addAll(Arrays.asList(WR1, WN1, WB1, WQ0, WK0, WB2, WN2, WR1, WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8));
+		piecesOnBoard.addAll(Arrays.asList(BR1, BN1, BB1, BQ0, BK0, BB2, BN2, BR1, BP1, BP2, BP3, BP4, BP5, BP6, BP7, BP8));
 
 	}
 }
