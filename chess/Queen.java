@@ -9,8 +9,10 @@ package chess;
 
 public class Queen extends Piece {
 
+    public Queen(ReturnPiece returnPiece) { super(returnPiece); }
+
     /**---------------------------------------------------------------------------------------------------------------------------------
-	 * This method implements piece-specific move validation logic.
+	 * This method implements queen-specific move validation logic.
 	 * @return A boolean instance that has the result of the move.
 	---------------------------------------------------------------------------------------------------------------------------------**/
 

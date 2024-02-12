@@ -9,8 +9,10 @@ package chess;
 
 public class Pawn extends Piece {
 
+    public Pawn(ReturnPiece returnPiece) { super(returnPiece); }
+
     /**---------------------------------------------------------------------------------------------------------------------------------
-	 * This method implements piece-specific move validation logic.
+	 * This method implements pawn-specific move validation logic.
 	 * @return A boolean instance that has the result of the move.
 	---------------------------------------------------------------------------------------------------------------------------------**/
 

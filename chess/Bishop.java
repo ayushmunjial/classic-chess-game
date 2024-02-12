@@ -8,9 +8,11 @@ package chess;
 ***************************************************************************************************************************************/
 
 public class Bishop extends Piece {
+
+    public Bishop(ReturnPiece returnPiece) { super(returnPiece); }
     
     /**---------------------------------------------------------------------------------------------------------------------------------
-	 * This method implements piece-specific move validation logic.
+	 * This method implements bishop-specific move validation logic.
 	 * @return A boolean instance that has the result of the move.
 	---------------------------------------------------------------------------------------------------------------------------------**/
 

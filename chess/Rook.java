@@ -9,8 +9,10 @@ package chess;
 
 public class Rook extends Piece {
     
+    public Rook(ReturnPiece returnPiece) { super(returnPiece); }
+    
     /**---------------------------------------------------------------------------------------------------------------------------------
-	 * This method implements piece-specific move validation logic.
+	 * This method implements rook-specific move validation logic.
 	 * @return A boolean instance that has the result of the move.
 	---------------------------------------------------------------------------------------------------------------------------------**/
 
