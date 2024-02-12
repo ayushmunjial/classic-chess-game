@@ -7,17 +7,15 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-import java.util.ArrayList; import java.util.Arrays; 
-import chess.ReturnPiece.PieceFile; import chess.ReturnPiece.PieceType;
+import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.PieceFile; import chess.ReturnPiece.PieceType;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class Board {
 
-    public static ArrayList<ReturnPiece> piecesOnBoard;
-
-    public static void init_play() {
-        piecesOnBoard.clear();
+	public static ArrayList<ReturnPiece> piecesOnBoard;
+	public void initializeBoard() {
+		piecesOnBoard.clear();
         ReturnPiece WR1 = new ReturnPiece(); WR1.pieceType = PieceType.WR; WR1.pieceFile = PieceFile.a; WR1.pieceRank = 1;
 		ReturnPiece WN1 = new ReturnPiece(); WN1.pieceType = PieceType.WN; WN1.pieceFile = PieceFile.b; WN1.pieceRank = 1;
 		ReturnPiece WB1 = new ReturnPiece(); WB1.pieceType = PieceType.WB; WB1.pieceFile = PieceFile.c; WB1.pieceRank = 1;
@@ -58,8 +56,19 @@ public class Board {
 		
 		piecesOnBoard.addAll(Arrays.asList(WR1, WN1, WB1, WQ0, WK0, WB2, WN2, WR1, WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8));
 		piecesOnBoard.addAll(Arrays.asList(BR1, BN1, BB1, BQ0, BK0, BB2, BN2, BR1, BP1, BP2, BP3, BP4, BP5, BP6, BP7, BP8));
-
-    }
+	}
+	
+	/**
+	- initializeBoard(): void - Sets up the initial state of the board with pieces.
+	- makeMove(move: String): boolean - Attempts to make a move on the board.
+	- isValidMove(move: String): boolean - Validates if the move is legal.
+	- isEnPassant(move: String): boolean - Checks if the move is an en passant capture.
+	- isCastling(move: String): boolean - Checks if the move is castling.
+	- promotePawn(move: String): void - Promotes a pawn to another piece upon reaching the last rank.
+	- isCheck(player: Player): boolean - Checks if the given player's king is in check.
+	- isCheckmate(player: Player): boolean - Checks if the given player is in checkmate.
+	- isDraw(): boolean - Checks if the game is a draw.
+	**/
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

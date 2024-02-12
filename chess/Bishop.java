@@ -7,8 +7,14 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Bishop {
+public class Bishop extends Piece {
     
+    /**---------------------------------------------------------------------------------------------------------------------------------
+	 * This method implements piece-specific move validation logic.
+	 * @return A boolean instance that has the result of the move.
+	---------------------------------------------------------------------------------------------------------------------------------**/
+
+    public boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty) { boolean isValid = false; return isValid; } 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

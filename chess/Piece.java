@@ -7,14 +7,9 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Pawn extends Piece {
+public abstract class Piece {
 
-    /**---------------------------------------------------------------------------------------------------------------------------------
-	 * This method implements piece-specific move validation logic.
-	 * @return A boolean instance that has the result of the move.
-	---------------------------------------------------------------------------------------------------------------------------------**/
-
-    public boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty) { boolean isValid = false; return isValid; } 
+    public abstract boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty); // To validate if the move is legal for this piece.
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

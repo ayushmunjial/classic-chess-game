@@ -41,37 +41,25 @@ class ReturnPlay {
 public class Chess {
 	
 	enum Player { white, black }
-	public static Player turn;
-	
+
 	/**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method plays the next move for whichever player has the turn.
-	 * 
 	 * @param move String for next move, e.g. "a2 a3"
-	 * 
 	 * @return A ReturnPlay instance that contains the result of the move.
 	---------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static ReturnPlay play(String move) { /* FILL IN THIS METHOD */	
-		return null;
-	}
+	public static ReturnPlay play(String move) { /* FILL IN THIS METHOD */	return null; }
 	
 	/**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method resets the game, and starts from scratch.
-	 * R:Rook, N:Knight, B:Bishop, Q:Queen, K:King, P:Pawns. 
 	---------------------------------------------------------------------------------------------------------------------------------**/
 	
-	public static void start() {
-		System.out.flush(); turn = Player.white; // A game must always start with a move by the player who is playing white.
-		Board.init_play();
-
-	}
+	public static void start() { /* FILL IN THIS METHOD */ }
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static void parseMove(String move) { /* FILL IN THIS METHOD */ }
-	public static void checkMove() { /* FILL IN THIS METHOD */ }
 	public static void exec_Move() { /* FILL IN THIS METHOD */ }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
