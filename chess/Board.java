@@ -7,7 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.PieceFile; import chess.ReturnPiece.PieceType; 
+import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.PieceFile; import chess.ReturnPiece.PieceType;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +60,15 @@ public class Board {
 		currPiecesOnBoard.addAll(Arrays.asList(BR1, BN1, BB1, BQ0, BK0, BB2, BN2, BR2, BP1, BP2, BP3, BP4, BP5, BP6, BP7, BP8));
 	}
 	
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
+	public static boolean isSpotEmpty(int X, int Y) { // To check if there exists a ReturnPiece at the given position.
+		for (ReturnPiece piece : Board.currPiecesOnBoard) { String f = "" + (char) (X + 96);
+			if (piece.pieceFile.toString().equals(f) && piece.pieceRank == Y) { return false; } else { return true; }
+		}
+		return false;
+	} 
+
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static boolean isWalkClear(int X1, int Y1, int X2, int Y2) { return false; } // To check that there are no pieces in between.
