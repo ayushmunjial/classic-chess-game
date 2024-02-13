@@ -7,9 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Rook extends Piece {
-    
-    public Rook(ReturnPiece returnPiece) { super(returnPiece); }
+public class Rook extends Piece { public Rook(ReturnPiece returnPiece) { super(returnPiece); }
     
     /**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method implements rook-specific move validation logic.

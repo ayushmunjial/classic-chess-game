@@ -7,9 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Bishop extends Piece {
-
-    public Bishop(ReturnPiece returnPiece) { super(returnPiece); }
+public class Bishop extends Piece { public Bishop(ReturnPiece returnPiece) { super(returnPiece); }
     
     /**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method implements bishop-specific move validation logic.

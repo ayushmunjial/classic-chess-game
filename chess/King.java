@@ -7,9 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class King extends Piece {
-
-    public King(ReturnPiece returnPiece) { super(returnPiece); }
+public class King extends Piece { public King(ReturnPiece returnPiece) { super(returnPiece); }
 
     /**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method implements king-specific move validation logic.

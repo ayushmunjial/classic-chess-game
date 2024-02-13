@@ -7,9 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Pawn extends Piece {
-
-    public Pawn(ReturnPiece returnPiece) { super(returnPiece); }
+public class Pawn extends Piece { public Pawn(ReturnPiece returnPiece) { super(returnPiece); }
 
     /**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method implements pawn-specific move validation logic.

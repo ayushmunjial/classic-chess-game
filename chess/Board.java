@@ -14,10 +14,11 @@ import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.Pi
 public class Board {
 
 	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>(); 
+	public static ArrayList<Piece> currPieceObjects = new ArrayList<Piece>(); 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static void initializeBoard() {
-		currPiecesOnBoard.clear(); 
+		currPiecesOnBoard.clear(); currPieceObjects.clear();
         ReturnPiece WR1 = new ReturnPiece(); WR1.pieceType = PieceType.WR; WR1.pieceFile = PieceFile.a; WR1.pieceRank = 1;
 		ReturnPiece WN1 = new ReturnPiece(); WN1.pieceType = PieceType.WN; WN1.pieceFile = PieceFile.b; WN1.pieceRank = 1;
 		ReturnPiece WB1 = new ReturnPiece(); WB1.pieceType = PieceType.WB; WB1.pieceFile = PieceFile.c; WB1.pieceRank = 1;
@@ -58,16 +59,24 @@ public class Board {
 		
 		currPiecesOnBoard.addAll(Arrays.asList(WR1, WN1, WB1, WQ0, WK0, WB2, WN2, WR2, WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8));
 		currPiecesOnBoard.addAll(Arrays.asList(BR1, BN1, BB1, BQ0, BK0, BB2, BN2, BR2, BP1, BP2, BP3, BP4, BP5, BP6, BP7, BP8));
+
+		for (ReturnPiece piece : currPiecesOnBoard) { currPieceObjects.add((PieceOfType.createPiece(piece))); }
+	}
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
+	public static void syncArraysLists() { currPiecesOnBoard.clear(); // To keep currPiecesOnBoard up to date after a move is executed.
+		for (Piece piece : currPieceObjects) { currPiecesOnBoard.add(piece.returnPiece); }
 	}
 	
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static boolean isSpotEmpty(int X, int Y) { // To check if there exists a ReturnPiece at the given position.
-		for (ReturnPiece piece : Board.currPiecesOnBoard) { String f = "" + (char) (X + 96);
-			if (piece.pieceFile.toString().equals(f) && piece.pieceRank == Y) { return false; } else { return true; }
+		for (Piece piece : currPieceObjects) { String f = "" + (char) (X + 96);
+			if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y) { return false; } else { return true; }
 		}
 		return false;
-	} 
+	}
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 

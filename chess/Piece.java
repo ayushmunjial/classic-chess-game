@@ -8,7 +8,6 @@ package chess;
 ***************************************************************************************************************************************/
 
 public abstract class Piece {
-
     protected ReturnPiece returnPiece; public boolean inSpot; // To track whether the piece is at initial spot. 
     public Piece(ReturnPiece returnPiece) { this.returnPiece = returnPiece;  this.inSpot = true; }
     public ReturnPiece.PieceType getPieceType() { return returnPiece.pieceType; }
@@ -20,9 +19,7 @@ public abstract class Piece {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class PieceOfType {
-
     public static Piece createPiece(ReturnPiece returnPiece) {
-
         switch (returnPiece.pieceType) {
             case WP:
             case BP: 

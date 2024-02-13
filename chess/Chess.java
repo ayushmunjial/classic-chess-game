@@ -9,8 +9,6 @@ package chess;
 
 import java.util.ArrayList;
 
-import chess.ReturnPlay.Message;
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class ReturnPiece {
@@ -81,9 +79,9 @@ public class Chess {
 		
 		if(whiteSpaceCount == 0) { command = move; 
 			if(command.equalsIgnoreCase("resign")) { 
-					if(player.toString().equals("white")) { return Message.RESIGN_BLACK_WINS; }
-					else if(player.toString().equals("black")) { return Message.RESIGN_WHITE_WINS; }
-					else { return Message.ILLEGAL_MOVE; }
+					if(player.toString().equals("white")) { return ReturnPlay.Message.RESIGN_BLACK_WINS; }
+					else if(player.toString().equals("black")) { return ReturnPlay.Message.RESIGN_WHITE_WINS; }
+					else { return ReturnPlay.Message.ILLEGAL_MOVE; }
 			}
 		}
 
@@ -94,38 +92,63 @@ public class Chess {
 
 			if(whiteSpaceCount == 2) { command = move.substring(6); }
 
-			ReturnPiece currReturnPiece = null; // To parse the move to get the relevant ReturnPiece from currPiecesOnBoard.
-			for (ReturnPiece piece : Board.currPiecesOnBoard) { String f = oldPosition.substring(0, 1);
-				if (piece.pieceFile.toString().equals(f) && piece.pieceRank == Y1) { currReturnPiece = piece; }
-				else { return Message.ILLEGAL_MOVE; }
+			Piece currReturnPiece = null; // To parse the move to get the relevant ReturnPiece from currPiecesOnBoard.
+			for (Piece piece : Board.currPieceObjects) { String f = oldPosition.substring(0, 1);
+				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y1) { currReturnPiece = piece; }
+				else { return ReturnPlay.Message.ILLEGAL_MOVE; }
 			} 
 
 			if ((X1 >= 1 && X1 <= 8) && (Y1 >= 1 && Y1 <= 8) && (X2 >= 1 && X2 <= 8) && (Y2 >= 1 && Y2 <= 8)) {
 				return exec_Move(X1, Y1, X2, Y2, command, currReturnPiece);
 			}
-			else { return Message.ILLEGAL_MOVE; }
+			else { return ReturnPlay.Message.ILLEGAL_MOVE; } // To return an illegal move whenever the move is not valid.
 		}
 		return message;
 	}
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static ReturnPlay.Message exec_Move(int X1, int Y1, int X2, int Y2, String command, ReturnPiece currReturnPiece) { 
+	public static ReturnPlay.Message exec_Move(int X1, int Y1, int X2, int Y2, String command, Piece currReturnPiece) { 
 
-		ReturnPlay.Message message = null; Piece typeOfPiece = PieceOfType.createPiece(currReturnPiece); boolean isEmpty = true;
-		ReturnPiece newReturnPiece = null;
+		ReturnPlay.Message message = null; boolean isEmpty = true;
+		Piece newReturnPiece = null; // This stores the information about ReturnPiece object at the new specified position.
 
-		if(!Board.isSpotEmpty(X2, Y2)) {
-			for (ReturnPiece piece : Board.currPiecesOnBoard) { String f = "" + (char) (X2 + 96); Player newReturnPieceColor = null;
+		if(!Board.isSpotEmpty(X2, Y2)) { // To check if the move to new position is occupied and is the piece of same color?
+			for (Piece piece : Board.currPieceObjects) { String f = "" + (char) (X2 + 96); Player newReturnPieceColor = null;
 			
-				if(piece.pieceFile.toString().equals(f) && piece.pieceRank == Y2) { newReturnPiece = piece;
-					if(String.valueOf(piece.pieceType.toString().charAt(0)).equals("W")) { 
+				if(piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { newReturnPiece = piece;
+					if(String.valueOf(piece.returnPiece.pieceType.toString().charAt(0)).equals("W")) { 
 						newReturnPieceColor = Player.white; } else { newReturnPieceColor = Player.black; }
 				}
-				if(newReturnPieceColor.equals(player)) { return Message.ILLEGAL_MOVE; }
+				if(newReturnPieceColor.equals(player)) { return ReturnPlay.Message.ILLEGAL_MOVE; }
 			}
 			isEmpty = false;
 		}
+
+		if(Board.is_Castling(X1, Y1, X2, Y2)) { return message; } // To check if the move is a castling move, if true: executes move.
+		
+		// Some checking for En Passant //** FILL IN CODE **//
+
+		if(!Board.isWalkClear(X1, Y1, X2, Y2) && !currReturnPiece.isValidMove(X1, Y1, X2, Y2, isEmpty, player)) { 
+			return ReturnPlay.Message.ILLEGAL_MOVE; 
+			// To check that there are no pieces in between & it can implement piece-specific move logic.
+		}
+
+		/*Execute the move:
+
+		It sets the piece at the new position on the chessboard to be the same as the piece at the old position.
+		It marks the moved piece's firstMove flag as false.
+		If the moved piece is a pawn and reaches the opponent's back rank, it triggers pawn promotion by calling pawnPromotion().
+		It clears the old position on the chessboard by setting it to null. */
+
+		// newReturnPiece.returnPiece.pieceFile = (f for(ReturnPiece.pieceType f ) {  "" + (char) (X2 + 96); } );
+		// newReturnPiece.inSpot = false;
+
+		// for (Piece piece : Board.currPieceObjects) { String f = oldPosition.substring(0, 1);
+		// 	if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y1) { currReturnPiece = piece; }
+		// 	else { return Message.ILLEGAL_MOVE; }
+		// }
+
 
 		
 		// boolean isValid = false;

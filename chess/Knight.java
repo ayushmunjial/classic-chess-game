@@ -7,9 +7,7 @@ package chess;
  * @author Hein Min Thu
 ***************************************************************************************************************************************/
 
-public class Knight extends Piece {
-
-    public Knight(ReturnPiece returnPiece) { super(returnPiece); }
+public class Knight extends Piece { public Knight(ReturnPiece returnPiece) { super(returnPiece); }
     
     /**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method implements knight-specific move validation logic.
