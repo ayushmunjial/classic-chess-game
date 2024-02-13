@@ -16,7 +16,13 @@ public class King extends Piece {
 	 * @return A boolean instance that has the result of the move.
 	---------------------------------------------------------------------------------------------------------------------------------**/
 
-    public boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty) { boolean isValid = false; return isValid; } 
+    public boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty, Chess.Player player) {
+
+        int moveX; int moveY; boolean isValid = false; moveX = Math.abs(X2 - X1); moveY = Math.abs(Y2 - Y1);
+		if ((moveX == 1 && moveY == 0) || (moveX == 0 && moveY == 1) || (moveX == moveY && moveX == 1 && moveY == 1)) { isValid = true; }
+
+        return isValid; 
+    } 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

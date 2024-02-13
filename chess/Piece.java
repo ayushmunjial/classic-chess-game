@@ -9,9 +9,12 @@ package chess;
 
 public abstract class Piece {
 
-    protected ReturnPiece returnPiece; public Piece(ReturnPiece returnPiece) { this.returnPiece = returnPiece; }
+    protected ReturnPiece returnPiece; public boolean inSpot; // To track whether the piece is at initial spot. 
+    public Piece(ReturnPiece returnPiece) { this.returnPiece = returnPiece;  this.inSpot = true; }
+    public ReturnPiece.PieceType getPieceType() { return returnPiece.pieceType; }
 
-    public abstract boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty); // To validate if the move is legal for this piece.
+    // To validate if the move is legal for this piece.
+    public abstract boolean isValidMove(int X1, int Y1, int X2, int Y2, boolean isEmpty, Chess.Player player); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

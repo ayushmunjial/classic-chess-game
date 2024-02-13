@@ -13,7 +13,9 @@ import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.Pi
 
 public class Board {
 
-	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>();
+	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>(); 
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
 	public static void initializeBoard() {
 		currPiecesOnBoard.clear(); 
         ReturnPiece WR1 = new ReturnPiece(); WR1.pieceType = PieceType.WR; WR1.pieceFile = PieceFile.a; WR1.pieceRank = 1;
@@ -58,16 +60,15 @@ public class Board {
 		currPiecesOnBoard.addAll(Arrays.asList(BR1, BN1, BB1, BQ0, BK0, BB2, BN2, BR2, BP1, BP2, BP3, BP4, BP5, BP6, BP7, BP8));
 	}
 	
-	/**
-	- makeMove(move: String): boolean - Attempts to make a move on the board.
-	- isValidMove(move: String): boolean - Validates if the move is legal.
-	- isEnPassant(move: String): boolean - Checks if the move is an en passant capture.
-	- isCastling(move: String): boolean - Checks if the move is castling.
-	- promotePawn(move: String): void - Promotes a pawn to another piece upon reaching the last rank.
-	- isCheck(player: Player): boolean - Checks if the given player's king is in check.
-	- isCheckmate(player: Player): boolean - Checks if the given player is in checkmate.
-	- isDraw(): boolean - Checks if the game is a draw.
-	**/
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
+	public static boolean isWalkClear(int X1, int Y1, int X2, int Y2) { return false; } // To check that there are no pieces in between.
+	public static boolean is_Castling(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is castling.
+	public static boolean isEnPassant(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is an en passant capture.
+	public static void promotePawn( int X2, int Y2) { } // To promote a pawn to another piece upon reaching the last rank. Default: Queen.
+
+	public static boolean identifyCheck(Chess.Player player) { return false; } // To check if the given player's king is in check.
+	public static boolean isInCheckmate(Chess.Player player) { return false; } // To check if the given player is in checkmate.
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
