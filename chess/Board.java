@@ -83,7 +83,35 @@ public class Board {
 	public static boolean isWalkClear(int X1, int Y1, int X2, int Y2) { return false; } // To check that there are no pieces in between.
 	public static boolean is_Castling(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is castling.
 	public static boolean isEnPassant(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is an en passant capture.
-	public static void promotePawn( int X2, int Y2) { } // To promote a pawn to another piece upon reaching the last rank. Default: Queen.
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
+	public static void promotePawn(int X2, int Y2, String command) { // To promote a pawn to another piece upon reaching the last rank.
+		for (Piece piece : currPieceObjects) { String f = "" + (char) (X2 + 96);
+			if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { 
+				if (piece.getPieceType().toString().equalsIgnoreCase("WP") && Y2 == 8) { 
+					switch (command) {
+						case "Q": piece.returnPiece.pieceType = ReturnPiece.PieceType.WQ;
+						case "R": piece.returnPiece.pieceType = ReturnPiece.PieceType.WR;
+						case "N": piece.returnPiece.pieceType = ReturnPiece.PieceType.WN;
+						case "B": piece.returnPiece.pieceType = ReturnPiece.PieceType.WB;
+						default: piece.returnPiece.pieceType = ReturnPiece.PieceType.WQ;
+					}
+				}
+				else if (piece.getPieceType().toString().equalsIgnoreCase("BP") && Y2 == 8) { 
+					switch (command) {
+						case "Q": piece.returnPiece.pieceType = ReturnPiece.PieceType.BQ;
+						case "R": piece.returnPiece.pieceType = ReturnPiece.PieceType.BR;
+						case "N": piece.returnPiece.pieceType = ReturnPiece.PieceType.BN;
+						case "B": piece.returnPiece.pieceType = ReturnPiece.PieceType.BB;
+						default: piece.returnPiece.pieceType = ReturnPiece.PieceType.BQ;
+					}
+				}
+			}
+		}
+	}
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static boolean identifyCheck(Chess.Player player) { return false; } // To check if the given player's king is in check.
 	public static boolean isInCheckmate(Chess.Player player) { return false; } // To check if the given player is in checkmate.

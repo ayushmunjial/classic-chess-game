@@ -31,16 +31,13 @@ class ReturnPiece {
 
 class ReturnPlay {
 	enum Message {ILLEGAL_MOVE, DRAW, RESIGN_BLACK_WINS, RESIGN_WHITE_WINS, CHECK, CHECKMATE_BLACK_WINS, CHECKMATE_WHITE_WINS, STALEMATE};
-	
 	ArrayList<ReturnPiece> piecesOnBoard; Message message;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // To apply object-oriented design ideas to design and implement a 2-Player Chess game.
-public class Chess {
-	
-	enum Player { white, black } public static Player player;
+public class Chess { enum Player { white, black } public static Player player;
 
 	/**---------------------------------------------------------------------------------------------------------------------------------
 	 * This method plays the next move for whichever player has the turn.
@@ -49,10 +46,9 @@ public class Chess {
 	---------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static ReturnPlay play(String move) { 
-
 		ReturnPlay.Message message = parseMove(move); // This receives an appropriate message according to the move's validity.
-		if(!message.toString().equals("ILLEGAL_MOVE")) {
-			if(player.toString().equals("white")) { player = Player.black; } else { player = Player.white; }
+		if (!message.toString().equals("ILLEGAL_MOVE")) {
+			if (player.toString().equals("white")) { player = Player.black; } else { player = Player.white; }
 		}
 
 		ReturnPlay playGame = new ReturnPlay(); playGame.piecesOnBoard = Board.currPiecesOnBoard; playGame.message = message;
@@ -65,7 +61,6 @@ public class Chess {
 	---------------------------------------------------------------------------------------------------------------------------------**/
 	
 	public static void start() { 
-
 		System.out.flush(); player = Player.white; // A game must always start with a move by the player who is playing white.
 		Board.initializeBoard();
 	}
@@ -73,35 +68,39 @@ public class Chess {
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static ReturnPlay.Message parseMove(String move) { 
-		int length = move.length(); int whiteSpaceCount = 0; move = move.strip(); move = move.toLowerCase();
+		int length = move.length(); int whiteSpaceCount = 0; move = move.strip(); move = move.toLowerCase(); // To make move standard.
 		String oldPosition, newPosition, command = ""; int X1, Y1, X2, Y2; ReturnPlay.Message message = null; 
-		for(int i = 0; i < length; i++) { char ch = move.charAt(i); if(ch == ' ') { whiteSpaceCount += 1; } }
+		for (int i = 0; i < length; i++) { char ch = move.charAt(i); if (ch == ' ') { whiteSpaceCount += 1; } }
 		
-		if(whiteSpaceCount == 0) { command = move; 
-			if(command.equalsIgnoreCase("resign")) { 
-					if(player.toString().equals("white")) { return ReturnPlay.Message.RESIGN_BLACK_WINS; }
-					else if(player.toString().equals("black")) { return ReturnPlay.Message.RESIGN_WHITE_WINS; }
+		if (whiteSpaceCount == 0) { command = move; 
+			if (command.equalsIgnoreCase("resign")) { 
+					if (player.toString().equals("white")) { return ReturnPlay.Message.RESIGN_BLACK_WINS; }
+					else if (player.toString().equals("black")) { return ReturnPlay.Message.RESIGN_WHITE_WINS; }
 					else { return ReturnPlay.Message.ILLEGAL_MOVE; }
 			}
 		}
 
-		if(whiteSpaceCount == 1 || whiteSpaceCount == 2) {
+		if (whiteSpaceCount == 1 || whiteSpaceCount == 2) {
 			oldPosition = move.substring(0,2); newPosition = move.substring(3, 5);
 			X1 = oldPosition.charAt(0) - 96; Y1 = Integer.parseInt(String.valueOf(oldPosition.charAt(1)));
 			X2 = newPosition.charAt(0) - 96; Y2 = Integer.parseInt(String.valueOf(newPosition.charAt(1)));
 
-			if(whiteSpaceCount == 2) { command = move.substring(6); }
+			if (whiteSpaceCount == 2) { command = move.substring(6); }
 
 			Piece currReturnPiece = null; // To parse the move to get the relevant ReturnPiece from currPiecesOnBoard.
-			for (Piece piece : Board.currPieceObjects) { String f = oldPosition.substring(0, 1);
+			for(Piece piece : Board.currPieceObjects) { String f = oldPosition.substring(0, 1);
 				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y1) { currReturnPiece = piece; }
 				else { return ReturnPlay.Message.ILLEGAL_MOVE; }
 			} 
 
+			String[] validCommands = {"draw?", "", "Q", "R", "N", "B"};
+
 			if ((X1 >= 1 && X1 <= 8) && (Y1 >= 1 && Y1 <= 8) && (X2 >= 1 && X2 <= 8) && (Y2 >= 1 && Y2 <= 8)) {
-				return exec_Move(X1, Y1, X2, Y2, command, currReturnPiece);
+				for (String c : validCommands) { if(command.equalsIgnoreCase(c)) {
+					return exec_Move(X1, Y1, X2, Y2, command, currReturnPiece); }
+				}
 			}
-			else { return ReturnPlay.Message.ILLEGAL_MOVE; } // To return an illegal move whenever the move is not valid.
+			else { return ReturnPlay.Message.ILLEGAL_MOVE; } // To return an illegal move whenever the move is not valid in any manner.
 		}
 		return message;
 	}
@@ -109,53 +108,63 @@ public class Chess {
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static ReturnPlay.Message exec_Move(int X1, int Y1, int X2, int Y2, String command, Piece currReturnPiece) { 
+		ReturnPlay.Message message = null; boolean isEmpty = true; Piece newReturnPiece = null; // To store the Piece at new position.
 
-		ReturnPlay.Message message = null; boolean isEmpty = true;
-		Piece newReturnPiece = null; // This stores the information about ReturnPiece object at the new specified position.
-
-		if(!Board.isSpotEmpty(X2, Y2)) { // To check if the move to new position is occupied and is the piece of same color?
+		if (!Board.isSpotEmpty(X2, Y2)) { // To check if the move to new position is occupied and is the piece of same color?
 			for (Piece piece : Board.currPieceObjects) { String f = "" + (char) (X2 + 96); Player newReturnPieceColor = null;
 			
-				if(piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { newReturnPiece = piece;
-					if(String.valueOf(piece.returnPiece.pieceType.toString().charAt(0)).equals("W")) { 
+				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) {
+					if (String.valueOf(piece.returnPiece.pieceType.toString().charAt(0)).equals("W")) { 
 						newReturnPieceColor = Player.white; } else { newReturnPieceColor = Player.black; }
 				}
-				if(newReturnPieceColor.equals(player)) { return ReturnPlay.Message.ILLEGAL_MOVE; }
+				if (newReturnPieceColor.equals(player)) { return ReturnPlay.Message.ILLEGAL_MOVE; }
 			}
 			isEmpty = false;
 		}
 
-		if(Board.is_Castling(X1, Y1, X2, Y2)) { return message; } // To check if the move is a castling move, if true: executes move.
+		if (Board.is_Castling(X1, Y1, X2, Y2)) { Board.syncArraysLists(); // To check if move is castling move. Move executes, if true.
+			if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; }
+		} 
 		
 		// Some checking for En Passant //** FILL IN CODE **//
+		//////
+		/////
+		/////
 
-		if(!Board.isWalkClear(X1, Y1, X2, Y2) && !currReturnPiece.isValidMove(X1, Y1, X2, Y2, isEmpty, player)) { 
+		if (!Board.isWalkClear(X1, Y1, X2, Y2) && !currReturnPiece.isValidMove(X1, Y1, X2, Y2, isEmpty, player)) { 
 			return ReturnPlay.Message.ILLEGAL_MOVE; 
-			// To check that there are no pieces in between & it can implement piece-specific move logic.
+			// To check that there are no pieces in between & if it implements piece-specific move validation logic.
 		}
 
-		/*Execute the move:
+		/** This part executes the move. It sets the piece at the new position on the chessboard by deleting piece at old position. **/
 
-		It sets the piece at the new position on the chessboard to be the same as the piece at the old position.
-		It marks the moved piece's firstMove flag as false.
-		If the moved piece is a pawn and reaches the opponent's back rank, it triggers pawn promotion by calling pawnPromotion().
-		It clears the old position on the chessboard by setting it to null. */
-
-		// newReturnPiece.returnPiece.pieceFile = (f for(ReturnPiece.pieceType f ) {  "" + (char) (X2 + 96); } );
-		// newReturnPiece.inSpot = false;
-
-		// for (Piece piece : Board.currPieceObjects) { String f = oldPosition.substring(0, 1);
-		// 	if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y1) { currReturnPiece = piece; }
-		// 	else { return Message.ILLEGAL_MOVE; }
-		// }
-
-
+		ReturnPiece newPieceData = new ReturnPiece(); newReturnPiece = PieceOfType.createPiece(newPieceData); // To assign new object.
+		newReturnPiece.returnPiece.pieceType = currReturnPiece.getPieceType(); newReturnPiece.returnPiece.pieceRank = Y2; 
+		newReturnPiece.returnPiece.pieceFile = ReturnPiece.PieceFile.valueOf("" + (char) (X2 + 96)); newReturnPiece.inSpot = false;
 		
-		// boolean isValid = false;
-		// // To check if the new position is empty.
-		// if (command.equals("")) { isValid = typeOfPiece.isValidMove(X1, Y1, X2, Y2, isEmpty, player); }
 
-		return message;
+		for (Piece piece : Board.currPieceObjects) { // To delete the piece at the old position since it is no longer needed or used.
+			if (piece.returnPiece.equals(currReturnPiece.returnPiece)) { Board.currPieceObjects.remove(piece); }
+		}
+
+		if (!isEmpty) { for (Piece piece : Board.currPieceObjects) { String f = "" + (char) (X2 + 96); 
+				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { 
+					Board.currPieceObjects.remove(piece);
+				} // To remove piece at the new position in case the spot is not empty. We have already checked the case for same color.
+			}
+		}
+		Board.currPieceObjects.add(newReturnPiece); // To add the new piece information and sync lists in the end for up-to-date data.
+
+		String pType = newReturnPiece.getPieceType().toString(); 
+		if (pType.equals("WP") || pType.equals("BP")) { Board.promotePawn(X2, Y2, command); } // To promote pawn.
+
+		// Some detecting for En Passant //** FILL IN CODE **//
+		//////
+		/////
+		/////
+
+		Board.syncArraysLists();
+		if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; } 
 	}
 }
 
