@@ -73,15 +73,36 @@ public class Board {
 
 	public static boolean isSpotEmpty(int X, int Y) { // To check if there exists a ReturnPiece at the given position.
 		for (Piece piece : currPieceObjects) { String f = "" + (char) (X + 96);
-			if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y) { return false; } else { return true; }
+			if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y) { return false; }
 		}
-		return false;
+		return true;
 	}
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static boolean isWalkClear(int X1, int Y1, int X2, int Y2) { return false; } // To check that there are no pieces in between.
-	public static boolean is_Castling(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is castling.
+	public static boolean isWalkClear(int X1, int Y1, int X2, int Y2) {  // To check that there are no pieces in between old and new pos.
+		// To check if a move from point A to point B in horizontal, vertical, or diagnol direction has no obstructions.
+
+		int moveX, moveY; boolean isEmpty = true; moveX = Math.abs(X2 - X1); moveY = Math.abs(Y2 - Y1); int dx = 0, dy = 0;
+		dx = X2 > X1 ? 1 : -1; dy = Y2 > Y1 ? 1 : -1; // Kings and knights can move to any position without obstruction.
+
+		if (Y1 == Y2) { X1 = X1 + dx; for (int x = 1; x < moveX; x++) { if (!isSpotEmpty(X1, Y1)) { return false; } X1 = X1 + dx; }}
+		if (X1 == X2) { Y1 = Y1 + dy; for (int y = 1; y < moveY; y++) { if (!isSpotEmpty(X1, Y1)) { return false; } Y1 = Y1 + dy; }}
+
+		if (X1 != X2 && Y1 != Y2) { X1 = X1 + dx; Y1 = Y1 + dy; 
+			for (int d = 1; d < moveY; d++) { if (!isSpotEmpty(X1, Y1)) { return false; } X1 = X1 + dx; Y1 = Y1 + dy; }}
+
+		return isEmpty;
+	}
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
+	public static boolean is_Castling(int X1, int Y1, int X2, int Y2, Piece currReturnPiece) { // To check if move is a castling move.
+		return false; 
+	}
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
 	public static boolean isEnPassant(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is an en passant capture.
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/

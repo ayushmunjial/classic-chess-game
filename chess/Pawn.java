@@ -18,7 +18,7 @@ public class Pawn extends Piece { public Pawn(ReturnPiece returnPiece) { super(r
         
         int moveX, moveY; boolean isValid = false; moveX = Math.abs(X2 - X1);
 		
-		if (this.getPieceType().toString().equalsIgnoreCase("white")) { moveY = Y2 - Y1; }
+		if (this.getPieceType().toString().equalsIgnoreCase("WP")) { moveY = Y2 - Y1; }
         else { moveY = Y1 - Y2; } // The direction of movement based on whether the pawn is white or not. 
 		
 		if (moveX == 0 && moveY == 1 && isEmpty == true) { isValid = true; } 
