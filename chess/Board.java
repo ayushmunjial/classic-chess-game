@@ -86,6 +86,12 @@ public class Board {
 		int moveX, moveY; boolean isEmpty = true; moveX = Math.abs(X2 - X1); moveY = Math.abs(Y2 - Y1); int dx = 0, dy = 0;
 		dx = X2 > X1 ? 1 : -1; dy = Y2 > Y1 ? 1 : -1; // Kings and knights can move to any position without obstruction.
 
+		String[] pass = new String[]{"WN", "BN", "WK", "BK"}; for (Piece piece : currPieceObjects) { String f = "" + (char) (X1 + 96); 
+			if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y1) { 
+				for (String type: pass) { if (piece.getPieceType().toString().equals(type)) { return true; } }
+			}
+		}
+
 		if (Y1 == Y2) { X1 = X1 + dx; for (int x = 1; x < moveX; x++) { if (!isSpotEmpty(X1, Y1)) { return false; } X1 = X1 + dx; }}
 		if (X1 == X2) { Y1 = Y1 + dy; for (int y = 1; y < moveY; y++) { if (!isSpotEmpty(X1, Y1)) { return false; } Y1 = Y1 + dy; }}
 
@@ -134,7 +140,30 @@ public class Board {
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static boolean identifyCheck(Chess.Player player) { return false; } // To check if the given player's king is in check.
+	public static boolean identifyCheck(Chess.Player player) { // To check if the opponent player's king is in check by current player.
+		int kingX = -1, kingY = -1; PieceType kingType = (player == Chess.Player.white) ? PieceType.BK : PieceType.WK; 
+
+		for (Piece piece : currPieceObjects) { // To store the coordinates of the king of the given player.
+			if (piece.getPieceType() == kingType) { 
+				kingX = piece.returnPiece.pieceFile.ordinal() + 1; kingY = piece.returnPiece.pieceRank;
+			}
+		}
+
+		for (Piece opponentPiece : currPieceObjects) { // To access and check if the opponent's piece can move to the king's position.
+			if ((player == Chess.Player.white && opponentPiece.getPieceType().toString().startsWith("W")) ||
+				(player == Chess.Player.black && opponentPiece.getPieceType().toString().startsWith("B"))) {
+				int oppoX = opponentPiece.returnPiece.pieceFile.ordinal() + 1; int oppoY = opponentPiece.returnPiece.pieceRank;
+
+				if(opponentPiece.isValidMove(oppoX, oppoY, kingX, kingY, true, player)) { 
+					if (isWalkClear(oppoX, oppoY, kingX, kingY)) { return true; } // If all conditions are met, given player is in check.
+				}
+			}
+		}
+		return false;
+	}
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
 	public static boolean isInCheckmate(Chess.Player player) { return false; } // To check if the given player is in checkmate.
 }
 

@@ -131,9 +131,11 @@ public class Chess { enum Player { white, black } public static Player player;
 			isEmpty = false;
 		}
 
-		if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists(); // To check if move is a castling move, it executes move.
-			if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; }
+		if (!Board.identifyCheck(player)) { // To check if move is a castling move & execute it. Cannot use castling if under CHECK.
+			if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists(); 
+				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; } } 
 		} 
+		else { return ReturnPlay.Message.ILLEGAL_MOVE; }
 		
 
 		//////
@@ -142,8 +144,8 @@ public class Chess { enum Player { white, black } public static Player player;
 		
 
 		if (!Board.isWalkClear(X1, Y1, X2, Y2)) { return ReturnPlay.Message.ILLEGAL_MOVE; } // To check that there are no pieces in between.
+		// To check if it implements piece-specific move validation logic.
 		if (!currReturnPiece.isValidMove(X1, Y1, X2, Y2, isEmpty, player)) { return ReturnPlay.Message.ILLEGAL_MOVE; }
-			// To check if it implements piece-specific move validation logic.
 
 		/** This part executes the move. It sets the piece at the new position on the chessboard by deleting piece at old position. **/
 
@@ -173,8 +175,9 @@ public class Chess { enum Player { white, black } public static Player player;
 		// Some detecting for En Passant //** FILL IN CODE **//
 		//////
 		
-		
+
 		Board.syncArraysLists(); //  To sync lists in the end for up-to-date data in the global lists in the Board class.
+		if (Board.identifyCheck(player)) { return ReturnPlay.Message.CHECK; }
 		if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; } 
 	}
 }
