@@ -13,8 +13,8 @@ import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.Pi
 
 public class Board {
 
-	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>(); 
-	public static ArrayList<Piece> currPieceObjects = new ArrayList<Piece>(); 
+	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>(); // This is the list to be returned.
+	public static ArrayList<Piece> currPieceObjects = new ArrayList<Piece>(); public static int wkCheck = 0, bkCheck = 0;
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static void initializeBoard() {
@@ -84,9 +84,9 @@ public class Board {
 		// To check if a move from point A to point B in horizontal, vertical, or diagnol direction has no obstructions.
 
 		int moveX, moveY; boolean isEmpty = true; moveX = Math.abs(X2 - X1); moveY = Math.abs(Y2 - Y1); int dx = 0, dy = 0;
-		dx = X2 > X1 ? 1 : -1; dy = Y2 > Y1 ? 1 : -1; // Kings and knights can move to any position without obstruction.
+		dx = X2 > X1 ? 1 : -1; dy = Y2 > Y1 ? 1 : -1; // Knights can move to any position without obstruction.
 
-		String[] pass = new String[]{"WN", "BN", "WK", "BK"}; for (Piece piece : currPieceObjects) { String f = "" + (char) (X1 + 96); 
+		String[] pass = new String[]{"WN", "BN"}; for (Piece piece : currPieceObjects) { String f = "" + (char) (X1 + 96); 
 			if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y1) { 
 				for (String type: pass) { if (piece.getPieceType().toString().equals(type)) { return true; } }
 			}
@@ -103,8 +103,70 @@ public class Board {
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static boolean is_Castling(int X1, int Y1, int X2, int Y2, Piece currReturnPiece) { // To check if move is a castling move.
-		return false; 
+	public static boolean is_Castling(int X1, int Y1, int X2, int Y2, Piece currReturnPiece) {  // To check if move is a castling move.
+		int moveX; moveX = X2 - X1; String pieceTypeName = currReturnPiece.getPieceType().toString(); 
+		Piece rook = null; Piece newKingPiece = null; Piece newRookPiece = null; int rX2 = 0, rY2 = 0;
+		
+		if (currReturnPiece.inSpot == true && Math.abs(moveX) == 2) { 
+			if (pieceTypeName.equals("WK")) { for (Piece piece : currPieceObjects) {
+					if (moveX == 2) { 
+						if (piece.returnPiece.pieceFile.toString().equals("h") && piece.returnPiece.pieceRank == 1) { 
+							if (piece.getPieceType().toString().equals("WR")) { rook = piece; rX2 = 6; rY2 = 1; } 
+						}
+					}
+					else { 
+						if (piece.returnPiece.pieceFile.toString().equals("a") && piece.returnPiece.pieceRank == 1) { 
+							if (piece.getPieceType().toString().equals("WR")) { rook = piece; rX2 = 4; rY2 = 1; } 
+						}
+					}		
+				}
+			}
+
+			else if (pieceTypeName.equals("BK")) { for (Piece piece : currPieceObjects) {
+					if (moveX == 2) { 
+						if (piece.returnPiece.pieceFile.toString().equals("h") && piece.returnPiece.pieceRank == 8) { 
+							if (piece.getPieceType().toString().equals("BR")) { rook = piece; rX2 = 6; rY2 = 8; } 
+						}
+					}
+					else { 
+						if (piece.returnPiece.pieceFile.toString().equals("a") && piece.returnPiece.pieceRank == 8) { 
+							if (piece.getPieceType().toString().equals("BR")) { rook = piece; rX2 = 4; rY2 = 8; } 
+						}
+					}			
+				}
+			}
+			else { return false; } // To return false, in case, the current Piece is neither a white king nor a black king.
+		} 
+		else { return false; } 
+
+		if (rook == null) { return false; } // To check if the rook is found or has value null.
+
+		if (isWalkClear(X1, Y1, X2, Y2)) {
+			ReturnPiece newKingData = new ReturnPiece(); newKingData.pieceFile = ReturnPiece.PieceFile.valueOf("" + (char) (X2 + 96));
+			newKingData.pieceRank = Y2; newKingData.pieceType = currReturnPiece.getPieceType(); 
+			newKingPiece = PieceOfType.createPiece(newKingData); newKingPiece.inSpot = false;  // To assign new king object.
+
+			Piece oldKingRemove = null; 
+			for (Piece piece : Board.currPieceObjects) {  // To delete king at the old position since it is no longer needed or used.
+				if (piece.returnPiece.equals(currReturnPiece.returnPiece)) { oldKingRemove = piece; }
+			} 
+			if (oldKingRemove != null) { Board.currPieceObjects.remove(oldKingRemove); }
+			
+			ReturnPiece newRookData = new ReturnPiece(); newRookData.pieceFile = ReturnPiece.PieceFile.valueOf("" + (char) (rX2 + 96));
+			newRookData.pieceRank = rY2; if (pieceTypeName.startsWith("W")) { newRookData.pieceType = PieceType.WR; } 
+			else { newRookData.pieceType = PieceType.BR; }
+			newRookPiece = PieceOfType.createPiece(newRookData); newRookPiece.inSpot = false;  // To assign new rook object.
+
+			Piece oldRookRemove = null; 
+			for (Piece piece : Board.currPieceObjects) {  // To delete rook at the old position since it is no longer needed or used.
+				if (piece.returnPiece.equals(rook.returnPiece)) { oldRookRemove = piece; }
+			} 
+			if (oldRookRemove != null) { Board.currPieceObjects.remove(oldRookRemove); } 
+			
+			currPieceObjects.add(newKingPiece); currPieceObjects.add(newRookPiece); return true; // To add the new piece information.
+		}
+
+		return false;
 	}
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/

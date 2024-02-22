@@ -131,13 +131,12 @@ public class Chess { enum Player { white, black } public static Player player;
 			isEmpty = false;
 		}
 
-		if (!Board.identifyCheck(player)) { // To check if move is a castling move & execute it. Cannot use castling if under CHECK.
-			if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists(); 
+		if ((player.equals(Player.white) && Board.wkCheck == 0) || (player.equals(Player.black) && Board.bkCheck == 0)) { // is castling possible?
+			if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists();  // To check if move is castling move & execute it.
 				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; } } 
-		} 
-		else { return ReturnPlay.Message.ILLEGAL_MOVE; }
-		
-
+		}
+			
+		 
 		//////
 		// Some checking for En Passant //** FILL IN CODE **//
 		//////
@@ -177,8 +176,13 @@ public class Chess { enum Player { white, black } public static Player player;
 		
 
 		Board.syncArraysLists(); //  To sync lists in the end for up-to-date data in the global lists in the Board class.
-		if (Board.identifyCheck(player)) { return ReturnPlay.Message.CHECK; }
-		if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; } 
+		if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; }
+		
+		if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } 
+			else { Board.wkCheck = 1; } return ReturnPlay.Message.CHECK; }
+		else { if (player.equals(Player.white)) { Board.bkCheck = 0; } else { Board.wkCheck = 0; }}
+			
+		return message; 
 	}
 }
 
