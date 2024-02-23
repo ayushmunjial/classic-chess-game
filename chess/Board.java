@@ -209,23 +209,23 @@ public class Board {
 				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { capturer = piece; }
 			}
 			if (capturer != null) { 
-				if (Chess.player.equals(Chess.Player.white) && capturer.getPieceType().toString().equals("BK")) {
+				if (Chess.player.equals(Chess.Player.white) && capturer.getPieceType().toString().equals("BP")) {
 					posAterCaptureX = X2; posAterCaptureY = 3; return true;
 				}
-				else if (Chess.player.equals(Chess.Player.black) && capturer.getPieceType().toString().equals("WK")) {
+				else if (Chess.player.equals(Chess.Player.black) && capturer.getPieceType().toString().equals("WP")) {
 					posAterCaptureX = X2; posAterCaptureY = 6; return true;
 				}
 			}
 		}
-		if ((X2 - 1) >= 0) { capturingPawns[2] = X2 - 1; capturingPawns[3] = Y2; // To check the left side for the enemy's pawn.
+		if ((X2 - 1) >= 1) { capturingPawns[2] = X2 - 1; capturingPawns[3] = Y2; // To check the left side for the enemy's pawn.
 			Piece capturer = null; for (Piece piece : currPieceObjects) { String f = "" + (char) ((X2 - 1) + 96);
 				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { capturer = piece; }
 			}
 			if (capturer != null) { 
-				if (Chess.player.equals(Chess.Player.white) && capturer.getPieceType().toString().equals("BK")) {
+				if (Chess.player.equals(Chess.Player.white) && capturer.getPieceType().toString().equals("BP")) {
 					posAterCaptureX = X2; posAterCaptureY = 3; return true;
 				}
-				else if (Chess.player.equals(Chess.Player.black) && capturer.getPieceType().toString().equals("WK")) {
+				else if (Chess.player.equals(Chess.Player.black) && capturer.getPieceType().toString().equals("WP")) {
 					posAterCaptureX = X2; posAterCaptureY = 6; return true;
 				}
 			}
