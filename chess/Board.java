@@ -13,12 +13,17 @@ import java.util.ArrayList; import java.util.Arrays; import chess.ReturnPiece.Pi
 
 public class Board {
 
-	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>(); // This is the list to be returned.
+	public static ArrayList<ReturnPiece> currPiecesOnBoard = new ArrayList<ReturnPiece>(); // This is the list to be returned in end.
 	public static ArrayList<Piece> currPieceObjects = new ArrayList<Piece>(); public static int wkCheck = 0, bkCheck = 0;
+
+	public static boolean canEnPassant; public static int toCapturePawnX, toCapturePawnY; // To store pawn's X & Y that is captured.
+	public static int posAterCaptureX, posAterCaptureY; // To store the X and Y of the enemy pawn that should be after the capture.
+	public static int[] capturingPawns = new int[4]; // To store all enemy pawns left or right to the pawn that needs to be captured.
+	
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static void initializeBoard() {
-		currPiecesOnBoard.clear(); currPieceObjects.clear();
+		currPiecesOnBoard.clear(); currPieceObjects.clear(); canEnPassant = false;
         ReturnPiece WR1 = new ReturnPiece(); WR1.pieceType = PieceType.WR; WR1.pieceFile = PieceFile.a; WR1.pieceRank = 1;
 		ReturnPiece WN1 = new ReturnPiece(); WN1.pieceType = PieceType.WN; WN1.pieceFile = PieceFile.b; WN1.pieceRank = 1;
 		ReturnPiece WB1 = new ReturnPiece(); WB1.pieceType = PieceType.WB; WB1.pieceFile = PieceFile.c; WB1.pieceRank = 1;
@@ -171,7 +176,62 @@ public class Board {
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static boolean isEnPassant(int X1, int Y1, int X2, int Y2) { return false; } // To check if the move is an en passant capture.
+	public static boolean doEnPassant(int X1, int Y1, int X2, int Y2) { // To check if move can make an en passant capture & execute it.
+		if ((X1 == capturingPawns[0] && Y1 == capturingPawns[1]) || (X1 == capturingPawns[2] && Y1 == capturingPawns[3])) {
+			if (X2 == posAterCaptureX && Y2 == posAterCaptureY) { 
+				
+				Piece pieceToRemove = null; for (Piece piece : currPieceObjects) { String f = "" + (char) (toCapturePawnX + 96);
+					if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == toCapturePawnY) { 
+						pieceToRemove = piece; // To delete the piece at old position since it is no longer needed or used.
+					}
+				} 
+				if (pieceToRemove != null) { Board.currPieceObjects.remove(pieceToRemove); }
+
+				for (Piece piece : currPieceObjects) { String f1 = "" + (char) (X1 + 96); String f2 = "" + (char) (X2 + 96);
+					if (piece.returnPiece.pieceFile.toString().equals(f1) && piece.returnPiece.pieceRank == Y1) { 
+						piece.returnPiece.pieceFile = ReturnPiece.PieceFile.valueOf(f2);  piece.returnPiece.pieceRank = Y2; piece.inSpot = false;
+					}
+				}
+				return true;
+			}
+		}
+		
+		return false; 
+	}
+
+	/**------------------------------------------------------------------------------------------------------------------------------**/
+
+	public static boolean isEnPassant(int X1, int Y1, int X2, int Y2) { // To check if the move is an en passant capture oppurtunity.
+		int moveY; moveY = Math.abs(Y2 - Y1); toCapturePawnX = X2; toCapturePawnY = Y2; if (moveY != 2) { return false; }
+
+		if ((X2 + 1) <= 8) { capturingPawns[0] = X2 + 1; capturingPawns[1] = Y2; // To check the right side for the enemy's pawn.
+			Piece capturer = null; for (Piece piece : currPieceObjects) { String f = "" + (char) ((X2 + 1) + 96);
+				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { capturer = piece; }
+			}
+			if (capturer != null) { 
+				if (Chess.player.equals(Chess.Player.white) && capturer.getPieceType().toString().equals("BK")) {
+					posAterCaptureX = X2; posAterCaptureY = 3; return true;
+				}
+				else if (Chess.player.equals(Chess.Player.black) && capturer.getPieceType().toString().equals("WK")) {
+					posAterCaptureX = X2; posAterCaptureY = 6; return true;
+				}
+			}
+		}
+		if ((X2 - 1) >= 0) { capturingPawns[2] = X2 - 1; capturingPawns[3] = Y2; // To check the left side for the enemy's pawn.
+			Piece capturer = null; for (Piece piece : currPieceObjects) { String f = "" + (char) ((X2 - 1) + 96);
+				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { capturer = piece; }
+			}
+			if (capturer != null) { 
+				if (Chess.player.equals(Chess.Player.white) && capturer.getPieceType().toString().equals("BK")) {
+					posAterCaptureX = X2; posAterCaptureY = 3; return true;
+				}
+				else if (Chess.player.equals(Chess.Player.black) && capturer.getPieceType().toString().equals("WK")) {
+					posAterCaptureX = X2; posAterCaptureY = 6; return true;
+				}
+			}
+		}
+		return false; 
+	}
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 

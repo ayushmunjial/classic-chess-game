@@ -133,14 +133,18 @@ public class Chess { enum Player { white, black } public static Player player;
 
 		if ((player.equals(Player.white) && Board.wkCheck == 0) || (player.equals(Player.black) && Board.bkCheck == 0)) { // is castling possible?
 			if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists();  // To check if move is castling move & execute it.
-				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; } } 
+				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; }} 
 		}
-			
-		 
-		//////
-		// Some checking for En Passant //** FILL IN CODE **//
-		//////
 		
+		if (Board.canEnPassant == true) { Board.canEnPassant = false; if (Board.doEnPassant(X1, Y1, X2, Y2)) { Board.syncArraysLists(); 
+				// To check if move can make an en passant capture & execute it.
+				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } 
+
+				if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } else { Board.wkCheck = 1; } 
+					return ReturnPlay.Message.CHECK; } 
+				else { if (player.equals(Player.white)) { Board.bkCheck = 0; } else { Board.wkCheck = 0; }} return message; 
+			}
+		} 
 
 		if (!Board.isWalkClear(X1, Y1, X2, Y2)) { return ReturnPlay.Message.ILLEGAL_MOVE; } // To check that there are no pieces in between.
 		// To check if it implements piece-specific move validation logic.
@@ -165,23 +169,18 @@ public class Chess { enum Player { white, black } public static Player player;
 			}
 		}
 		Board.currPieceObjects.remove(newPosOldOPiece); Board.currPieceObjects.add(newReturnPiece); // To add the new piece information.
-
 		String pType = newReturnPiece.getPieceType().toString(); 
+
 		if (pType.equals("WP") || pType.equals("BP")) { Board.promotePawn(X2, Y2, command); } // To promote pawn.
-
-
-		//////
-		// Some detecting for En Passant //** FILL IN CODE **//
-		//////
-		
+		// To check if the move has created an en passant capture oppurtunity for the opponent in the next move.
+		if (pType.equals("WP") || pType.equals("BP")) { Board.canEnPassant = Board.isEnPassant(X1, Y1, X2, Y2); }
 
 		Board.syncArraysLists(); //  To sync lists in the end for up-to-date data in the global lists in the Board class.
 		if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; }
 		
-		if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } 
-			else { Board.wkCheck = 1; } return ReturnPlay.Message.CHECK; }
-		else { if (player.equals(Player.white)) { Board.bkCheck = 0; } else { Board.wkCheck = 0; }}
-			
+		if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } else { Board.wkCheck = 1; } 
+			return ReturnPlay.Message.CHECK; } else { if (player.equals(Player.white)) { Board.bkCheck = 0; } else { Board.wkCheck = 0; }
+		}
 		return message; 
 	}
 }
