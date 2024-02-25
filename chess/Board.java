@@ -276,7 +276,7 @@ public class Board {
 				(player == Chess.Player.black && opponentPiece.getPieceType().toString().startsWith("B"))) {
 				int oppoX = opponentPiece.returnPiece.pieceFile.ordinal() + 1; int oppoY = opponentPiece.returnPiece.pieceRank;
 
-				if(opponentPiece.isValidMove(oppoX, oppoY, kingX, kingY, true, player)) { 
+				if(opponentPiece.isValidMove(oppoX, oppoY, kingX, kingY, false, player)) { 
 					if (isWalkClear(oppoX, oppoY, kingX, kingY)) { return true; } // If all conditions are met, given player is in check.
 				}
 			}
@@ -286,7 +286,204 @@ public class Board {
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
-	public static boolean isInCheckmate(Chess.Player player) { return false; } // To check if the given player is in checkmate.
+	public static boolean isInCheckmate(Chess.Player player) { // To check if the given player is in checkmate.
+		//Will check three scenarios - if King can escape, if Checking piece can be captured, or if other pieces can block Check.
+		if (!identifyCheck(player)) { return false; } // Not in check.
+		// Step 1: Can the king escape?
+		if (canKingEscape(player)) { return false; }
+		// Step 2: Can any piece capture the checking piece?
+		if (canCaptureCheckingPiece(player)) { return false; }
+		// Step 3: Can the check be blocked?
+		if (canBlockCheck(player)) { return false; }
+	
+		return true; // If none of the above, it's checkmate.
+	}
+	
+	private static boolean canKingEscape(Chess.Player player) { //checks if King can escape without capture
+		int kingX = -1, kingY = -1;  Piece kingPiece = findKingPiece(player);
+		
+		kingX = kingPiece.returnPiece.pieceFile.ordinal() + 1; 
+		kingY = kingPiece.returnPiece.pieceRank;
+		//check all possible moves for the king (8 surrounding moves)
+		for(int dx = -1 ; dx <= 1; dx++)
+		{
+			for(int dy = -1 ; dy<= 1; dy++)
+			{
+				int newX = kingX + dx;
+				int newY = kingY + dy;
+
+				if(newX>=1 && newX<=8 && newY>=1 && newY<=8 && kingPiece.isValidMove(kingX, kingY, newX, newY,true, player)&&isSpotEmpty(newX, newY)) //checking if the possibillities are within 8x8 Check Board and if the King can move to the new spot
+				{
+					//Document original King position
+					ReturnPiece.PieceFile oldFile = kingPiece.returnPiece.pieceFile;
+					int oldRank = kingPiece.returnPiece.pieceRank; 
+					String f = "" + (char)(newX + 96);
+					ReturnPiece.PieceFile newPieceFile = PieceFile.valueOf(f);
+					kingPiece.returnPiece.pieceFile = newPieceFile;
+					kingPiece.returnPiece.pieceRank = newY;
+				
+				if(identifyCheck(player)== false) //Move the king back and return false
+				{
+					kingPiece.returnPiece.pieceFile = oldFile;
+                    kingPiece.returnPiece.pieceRank = oldRank; return true;
+				}
+				kingPiece.returnPiece.pieceFile = oldFile;
+                kingPiece.returnPiece.pieceRank = oldRank;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static boolean canCaptureCheckingPiece(Chess.Player player) {
+		// Player whose turn it is, is trying to capture the piece giving check to their king
+		Chess.Player opponent = (player == Chess.Player.white) ? Chess.Player.black : Chess.Player.white;
+		Piece kingPiece = findKingPiece(player); // Find the king of the opponent
+		if (kingPiece == null) {
+			return false; // King not found - handle appropriately
+		}
+		int kingX = kingPiece.returnPiece.pieceFile.ordinal() + 1;
+		int kingY = kingPiece.returnPiece.pieceRank;
+
+		// Identify all pieces of the current player that are putting the opponent's king in check
+		ArrayList<Piece> checkingPieces = new ArrayList<>();
+		for (Piece currentPiece : currPieceObjects) {
+			if ((player == Chess.Player.white && currentPiece.getPieceType().toString().startsWith("W")) ||
+				(player == Chess.Player.black && currentPiece.getPieceType().toString().startsWith("B"))) {
+
+				int currentX = currentPiece.returnPiece.pieceFile.ordinal() + 1;
+				int currentY = currentPiece.returnPiece.pieceRank;
+				
+				if (currentPiece.isValidMove(currentX, currentY, kingX, kingY, false, opponent) && isWalkClear(currentX, currentY, kingX, kingY)) {
+					checkingPieces.add(currentPiece);
+				}
+			}
+		}
+		if(checkingPieces.size()>1){
+			return false;
+		}
+		else{
+		// Check if any of the opponent's pieces can capture the checking pieces
+			for (Piece opponentPiece : currPieceObjects) {
+				if ((opponent == Chess.Player.white && opponentPiece.getPieceType().toString().startsWith("W")) ||
+					(opponent == Chess.Player.black && opponentPiece.getPieceType().toString().startsWith("B"))) {
+
+					for (Piece checkingPiece : checkingPieces) {
+						int checkX = checkingPiece.returnPiece.pieceFile.ordinal() + 1;
+						int checkY = checkingPiece.returnPiece.pieceRank;
+
+						if (opponentPiece.isValidMove(opponentPiece.returnPiece.pieceFile.ordinal() + 1, opponentPiece.returnPiece.pieceRank, checkX, checkY, false, opponent) &&
+							isWalkClear(opponentPiece.returnPiece.pieceFile.ordinal() + 1, opponentPiece.returnPiece.pieceRank, checkX, checkY)) {
+							Piece capturedPiece = checkingPiece; // Store the captured piece
+						currPieceObjects.remove(checkingPiece); // Temporarily remove the captured piece
+						// Temporarily move the capturing piece
+						PieceFile originalFile = opponentPiece.returnPiece.pieceFile;
+						int originalRank = opponentPiece.returnPiece.pieceRank;
+						String f = "" + (char)(checkX + 96);
+						ReturnPiece.PieceFile newPieceFile = PieceFile.valueOf(f);
+						opponentPiece.returnPiece.pieceFile = newPieceFile;
+						opponentPiece.returnPiece.pieceRank = checkY;
+
+						// Check if the king is still in check after the capture
+						if (identifyCheck(player)==false) {
+							// Undo the simulated move
+							opponentPiece.returnPiece.pieceFile = originalFile;
+							opponentPiece.returnPiece.pieceRank = originalRank;
+							currPieceObjects.add(capturedPiece); // Restore the captured piece
+							return true;
+						}
+							opponentPiece.returnPiece.pieceFile = originalFile;
+							opponentPiece.returnPiece.pieceRank = originalRank;
+							currPieceObjects.add(capturedPiece); // Restore the captured piece
+						}
+					}
+				}
+			}
+		}			
+		return false;
+	}
+
+	private static boolean canBlockCheck(Chess.Player player) {
+		Chess.Player opponent = (player == Chess.Player.white) ? Chess.Player.black : Chess.Player.white;
+		Piece kingPiece = findKingPiece(player); // Find the king of the opponent
+		if (kingPiece == null) {
+			return false; // King not found - handle appropriately
+		}
+		int kingX = kingPiece.returnPiece.pieceFile.ordinal() + 1;
+		int kingY = kingPiece.returnPiece.pieceRank;
+	
+		// Identify all pieces of the current player that are putting the opponent's king in check
+		ArrayList<Piece> checkingPieces = new ArrayList<>();
+		for (Piece currentPiece : currPieceObjects) {
+			if ((player == Chess.Player.white && currentPiece.getPieceType().toString().startsWith("W")) ||
+				(player == Chess.Player.black && currentPiece.getPieceType().toString().startsWith("B"))) {
+	
+				int currentX = currentPiece.returnPiece.pieceFile.ordinal() + 1;
+				int currentY = currentPiece.returnPiece.pieceRank;
+				
+				if (currentPiece.isValidMove(currentX, currentY, kingX, kingY, false, opponent) && isWalkClear(currentX, currentY, kingX, kingY)) {
+					checkingPieces.add(currentPiece);
+				}
+			}
+		}
+		if(checkingPieces.size()>1){
+			return false;
+		}
+		else{
+			Piece checkingPiece = checkingPieces.get(0);
+			ArrayList<int[]> pathToKing = getPathToKing(checkingPiece, kingX, kingY);
+			if (pathToKing.size()>0) {
+			for(int[] square :pathToKing)
+			{
+				for (Piece piece : currPieceObjects) {
+					// Skip the opponent's pieces and the king
+					if ((player == Chess.Player.white && piece.getPieceType().toString().startsWith("W")) ||
+						(player == Chess.Player.black && piece.getPieceType().toString().startsWith("B")) ||
+						piece.getPieceType().toString().equals("WK") || piece.getPieceType().toString().equals("BK")) {
+						continue;
+					}
+					int pieceX = piece.returnPiece.pieceFile.ordinal() + 1;
+					int pieceY = piece.returnPiece.pieceRank;
+					if (piece.isValidMove(pieceX, pieceY, square[0], square[1], true, player) &&
+						isWalkClear(pieceX, pieceY, square[0], square[1])) {
+						return true; // Found a piece that can block the check
+            		}
+				}
+			}
+		}	
+		}
+		return false;
+	}
+	private static Piece findKingPiece(Chess.Player player) {
+		ReturnPiece.PieceType kingType = (player == Chess.Player.white) ? ReturnPiece.PieceType.BK : ReturnPiece.PieceType.WK;
+		for (Piece piece : currPieceObjects) {
+			if (piece.getPieceType() == kingType) {
+				return piece;
+			}
+		}
+		return null;
+	}
+
+	private static ArrayList<int[]> getPathToKing(Piece checkingPiece, int kingX, int kingY) {
+		ArrayList<int[]> path = new ArrayList<>();
+		int pieceX = checkingPiece.returnPiece.pieceFile.ordinal() + 1;
+		int pieceY = checkingPiece.returnPiece.pieceRank;
+
+		// Determine the direction of movement
+		int deltaX = Integer.compare(kingX, pieceX); // 0 if same file, 1 if king is right, -1 if left
+		int deltaY = Integer.compare(kingY, pieceY); // 0 if same rank, 1 if king is up, -1 if down
+
+		pieceX += deltaX;
+		pieceY += deltaY;
+		while (pieceX <= kingX && pieceY <= kingY) {
+			path.add(new int[]{pieceX, pieceY});
+			pieceX += deltaX;
+			pieceY += deltaY;
+		}
+		if (path.size()>0) { path.remove(path.size()-1); }
+		
+		return path;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -68,7 +68,7 @@ public class Chess { enum Player { white, black } public static Player player;
 	/**------------------------------------------------------------------------------------------------------------------------------**/
 
 	public static ReturnPlay.Message parseMove(String move) { 
-		int length = move.length(); int whiteSpaceCount = 0; move = move.strip(); move = move.toLowerCase(); // To make move standard.
+		move = move.trim(); int length = move.length(); int whiteSpaceCount = 0; move = move.toLowerCase(); // To make move standard.
 		String oldPosition, newPosition, command = ""; int X1, Y1, X2, Y2; ReturnPlay.Message message = null; 
 		for (int i = 0; i < length; i++) { char ch = move.charAt(i); if (ch == ' ') { whiteSpaceCount += 1; }}
 		
@@ -132,13 +132,27 @@ public class Chess { enum Player { white, black } public static Player player;
 		}
 
 		if ((player.equals(Player.white) && Board.wkCheck == 0) || (player.equals(Player.black) && Board.bkCheck == 0)) { // is castling possible?
-			if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists();  // To check if move is castling move & execute it.
-				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } else { return message; }} 
+			if (Board.is_Castling(X1, Y1, X2, Y2, currReturnPiece)) { Board.syncArraysLists();  
+				// To check if move is castling move & execute it.
+				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } 
+				
+				if (Board.isInCheckmate(player)) { if (player.equals(Player.white)) { return ReturnPlay.Message.CHECKMATE_WHITE_WINS; } 
+					else { return ReturnPlay.Message.CHECKMATE_BLACK_WINS; }
+				}
+
+				if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } else { Board.wkCheck = 1; } 
+					return ReturnPlay.Message.CHECK; } 
+				else { if (player.equals(Player.white)) { Board.bkCheck = 0; } else { Board.wkCheck = 0; }} return message; 
+			}
 		}
 		
 		if (Board.canEnPassant == true) { Board.canEnPassant = false; if (Board.doEnPassant(X1, Y1, X2, Y2)) { Board.syncArraysLists(); 
 				// To check if move can make an en passant capture & execute it.
 				if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; } 
+
+				if (Board.isInCheckmate(player)) { if (player.equals(Player.white)) { return ReturnPlay.Message.CHECKMATE_WHITE_WINS; } 
+					else { return ReturnPlay.Message.CHECKMATE_BLACK_WINS; }
+				}
 
 				if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } else { Board.wkCheck = 1; } 
 					return ReturnPlay.Message.CHECK; } 
@@ -177,6 +191,10 @@ public class Chess { enum Player { white, black } public static Player player;
 
 		Board.syncArraysLists(); //  To sync lists in the end for up-to-date data in the global lists in the Board class.
 		if (command.equalsIgnoreCase("draw?")) { return ReturnPlay.Message.DRAW; }
+
+		if (Board.isInCheckmate(player)) { if (player.equals(Player.white)) { return ReturnPlay.Message.CHECKMATE_WHITE_WINS; } 
+			else { return ReturnPlay.Message.CHECKMATE_BLACK_WINS; }
+		}
 		
 		if (Board.identifyCheck(player)) { if (player.equals(Player.white)) { Board.bkCheck = 1; } else { Board.wkCheck = 1; } 
 			return ReturnPlay.Message.CHECK; } else { if (player.equals(Player.white)) { Board.bkCheck = 0; } else { Board.wkCheck = 0; }
