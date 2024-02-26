@@ -166,6 +166,11 @@ public class Chess { enum Player { white, black } public static Player player;
 
 		/** This part executes the move. It sets the piece at the new position on the chessboard by deleting piece at old position. **/
 
+		ReturnPiece currReturnPieceCopy = new ReturnPiece(); currReturnPieceCopy.pieceFile = currReturnPiece.returnPiece.pieceFile;
+		currReturnPieceCopy.pieceRank = currReturnPiece.returnPiece.pieceRank; 
+		currReturnPieceCopy.pieceType = currReturnPiece.getPieceType(); 
+		Piece currPieceCopy = PieceOfType.createPiece(currReturnPieceCopy); currPieceCopy.inSpot = currPieceCopy.inSpot;
+
 		ReturnPiece newPieceData = new ReturnPiece(); newPieceData.pieceFile = ReturnPiece.PieceFile.valueOf("" + (char) (X2 + 96));
 		newPieceData.pieceRank = Y2; newPieceData.pieceType = currReturnPiece.getPieceType(); 
 		newReturnPiece = PieceOfType.createPiece(newPieceData); newReturnPiece.inSpot = false;  // To assign new object.
@@ -176,13 +181,38 @@ public class Chess { enum Player { white, black } public static Player player;
 		} 
 		if (pieceToRemove != null) { Board.currPieceObjects.remove(pieceToRemove); }
 
-		Piece newPosOldOPiece = null;
+		Piece newPosOldPiece = null; Piece newPosOldPieceCopy = null;
 		if (!isEmpty) { for (Piece piece : Board.currPieceObjects) { String f = "" + (char) (X2 + 96); 
-				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { newPosOldOPiece = piece; } 
+				if (piece.returnPiece.pieceFile.toString().equals(f) && piece.returnPiece.pieceRank == Y2) { newPosOldPiece = piece; } 
 				// To remove piece at the new position in case the spot is not empty. We have already checked the case for same color.
 			}
 		}
-		Board.currPieceObjects.remove(newPosOldOPiece); Board.currPieceObjects.add(newReturnPiece); // To add the new piece information.
+
+		if (newPosOldPiece != null) { // To make a deep copy of the the Piece at new position that is going to be captured.
+			ReturnPiece copyPiece = new ReturnPiece(); copyPiece.pieceFile = newPosOldPiece.returnPiece.pieceFile; 
+			copyPiece.pieceRank = newPosOldPiece.returnPiece.pieceRank; copyPiece.pieceType = newPosOldPiece.getPieceType(); 
+			newPosOldPieceCopy = PieceOfType.createPiece(copyPiece); newPosOldPieceCopy.inSpot = newPosOldPiece.inSpot; 
+
+			Board.currPieceObjects.remove(newPosOldPiece); // To delete the piece at new position since it is no longer needed or used.
+		}
+
+		Board.currPieceObjects.add(newReturnPiece); // To add the new piece information.
+
+		int isCheck = 0; if (player.equals(Player.white)) { isCheck = Board.wkCheck; } else { isCheck = Board.bkCheck; }
+		Player opponent = (player == Chess.Player.white) ? Chess.Player.black : Chess.Player.white;
+		boolean isStillCheck = Board.identifyCheck(opponent); // To check if the currect player is still in check.
+
+		if ((isCheck == 1 && isStillCheck == true) || (isCheck == 0 && isStillCheck == true)) { 
+			
+			Piece removeNewPiece = null; for (Piece piece : Board.currPieceObjects) { 
+				if (piece.returnPiece.equals(newReturnPiece.returnPiece)) { removeNewPiece = piece; }
+			}
+			if (removeNewPiece != null) { Board.currPieceObjects.remove(removeNewPiece); }
+
+			if (newPosOldPieceCopy != null) { Board.currPieceObjects.add(newPosOldPieceCopy); }
+			Board.currPieceObjects.add(currPieceCopy); return ReturnPlay.Message.ILLEGAL_MOVE; // To check illegal move by the player.
+		}
+
 		String pType = newReturnPiece.getPieceType().toString(); 
 
 		if (pType.equals("WP") || pType.equals("BP")) { Board.promotePawn(X2, Y2, command); } // To promote pawn.
