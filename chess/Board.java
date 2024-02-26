@@ -340,23 +340,41 @@ public class Board {
 		}
 
 		if (checkingPieces.size() > 1){ return false; }
-		else {
-			for (Piece opponentPiece : currPieceObjects) { // To check if any of the opponent's pieces can capture the checking piece.
+		else { Piece checkingPiece = checkingPieces.get(0); for (Piece opponentPiece : new ArrayList<>(currPieceObjects)) { 
+			// To check if any opponent's pieces can capture the checking piece.
+
 				if ((opponent == Chess.Player.white && opponentPiece.getPieceType().toString().startsWith("W")) ||
 					(opponent == Chess.Player.black && opponentPiece.getPieceType().toString().startsWith("B"))) {
+							
+					int checkX = checkingPiece.returnPiece.pieceFile.ordinal() + 1; int checkY = checkingPiece.returnPiece.pieceRank;
+					int enemyX = opponentPiece.returnPiece.pieceFile.ordinal() + 1; int enemyY = opponentPiece.returnPiece.pieceRank;
+	
+					if (opponentPiece.isValidMove(enemyX, enemyY, checkX, checkY, false, opponent)) {
+						if (isWalkClear(enemyX, enemyY, checkX, checkY)) {
 
-					for (Piece checkingPiece : checkingPieces) {
-						int checkX = checkingPiece.returnPiece.pieceFile.ordinal() + 1; int checkY = checkingPiece.returnPiece.pieceRank;
-						int enemyX = opponentPiece.returnPiece.pieceFile.ordinal() + 1; int enemyY = opponentPiece.returnPiece.pieceRank;
+							ReturnPiece checkingCopy = new ReturnPiece(); checkingCopy.pieceFile = checkingPiece.returnPiece.pieceFile;
+							checkingCopy.pieceRank = checkingPiece.returnPiece.pieceRank; 
+							checkingCopy.pieceType = checkingPiece.getPieceType(); 
+							Piece capturedPiece = PieceOfType.createPiece(checkingCopy); capturedPiece.inSpot = capturedPiece.inSpot;
 
-						if (opponentPiece.isValidMove(enemyX, enemyY, checkX, checkY, false, opponent)) {
-							if (isWalkClear(enemyX, enemyY, checkX, checkY)) { return true; }
+							currPieceObjects.remove(checkingPiece); PieceFile originalFile = opponentPiece.returnPiece.pieceFile;
+							int originalRank = opponentPiece.returnPiece.pieceRank;
+							ReturnPiece.PieceFile newPieceFile = PieceFile.valueOf("" + (char)(checkX + 96));
+							opponentPiece.returnPiece.pieceFile = newPieceFile; opponentPiece.returnPiece.pieceRank = checkY;
+
+							if ((identifyCheck(player)==true)) { // To check if the king is still in check after the capture.
+								opponentPiece.returnPiece.pieceFile = originalFile; opponentPiece.returnPiece.pieceRank = originalRank;
+								currPieceObjects.add(capturedPiece); return false;
+								
+							}
+							opponentPiece.returnPiece.pieceFile = originalFile; opponentPiece.returnPiece.pieceRank = originalRank;
+							currPieceObjects.add(capturedPiece); // To restore the captured piece.
 						}
-					}
+					}	
 				}
 			}
 		}			
-		return false;
+		return true;
 	}
 
 	/**------------------------------------------------------------------------------------------------------------------------------**/
