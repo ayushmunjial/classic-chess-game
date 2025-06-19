@@ -36,11 +36,11 @@ With a clean object-oriented design and efficient data handling, this game offer
 
 ---
 
-## ⌗ ASCII Board Preview
+## 🎲 ASCII Board Preview
 
 ```plaintext
    a  b  c  d  e  f  g  h
-8 [r][n][b][q][k][b][n][r] 8🎲
+8 [r][n][b][q][k][b][n][r] 8
 7 [p][p][p][p][p][p][p][p] 7
 6 [ ][ ][ ][ ][ ][ ][ ][ ] 6
 5 [ ][ ][ ][ ][ ][ ][ ][ ] 5
