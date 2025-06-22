@@ -73,3 +73,9 @@ With a clean object-oriented design and efficient data handling, this game offer
 
 All chess rules and mechanics were implemented following the official documentation on  
 👉 _[Wikipedia – Chess Rules](https://en.wikipedia.org/wiki/Chess)_
+
+---
+
+## ⚖️ License
+
+For private and professional portfolio use only. All rights reserved by Ayush Munjial.
